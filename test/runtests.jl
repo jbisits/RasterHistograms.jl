@@ -1,4 +1,4 @@
-using RasterHistograms, StatsBase, Test
+using RasterHistograms, Rasters, StatsBase, Test
 using LinearAlgebra: normalize, normalize!
 
 include("test_rasterhistograms.jl")
