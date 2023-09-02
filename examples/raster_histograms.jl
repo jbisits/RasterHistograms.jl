@@ -1,9 +1,9 @@
 # # [Raster Histograms](@id raster_hist_example)
 # First, add the required depedencies
 using Rasters, NCDatasets, Downloads, CairoMakie
-# and the `RasterHistograms` module from OceanRasterConversions.jl package
-using OceanRasterConversions.RasterHistograms
-# Using this module we can produce `Histogram`s from data that is in a `Raster`,
+# and the `RasterHistograms` package.
+using RasterHistograms
+# Using this package we can produce `Histogram`s from data that is in a `Raster`,
 # `RasterStack` or `RasterSeries`, which are N-dimensional arrays, in a similar way that
 # [xhistogram](https://xhistogram.readthedocs.io/en/latest/index.html) works for xarray
 # in python. This example is structured similarly to the
@@ -51,8 +51,8 @@ fig
 #     See the [module documentation](@ref raster_hist_module) for more info.
 # ## Real world data example
 # This package is mainly concerned with ocean variables, so we now look at temperature and
-# salinity distributions from the same ECCO temperature and salinity data we look at in
-# the [converting ocean variables](@ref converting_variables_example) example.
+# salinity distributions using ECCO model output.
+Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
 # This example also shows how the module works for 2-dimensional `Histograms` though it can
 # be generalised to N dimensions depending on the number of variables
 # (i.e. layers in the `RasterStack`) one is looking at.
@@ -73,8 +73,7 @@ ax = Axis(fig[1, 1];
           title = "Temperature and salinity joint distribution (unweighted)",
           xlabel = "Practical salinity (psu)",
           ylabel = "Potential temperature (°C)")
-show_empty_bins = false
-hm = heatmap!(ax, stack_hist, show_empty_bins; colorscale = log10)
+hm = heatmap!(ax, stack_hist; colorscale = log10)
 Colorbar(fig[1, 2], hm)
 fig
 # ### Weighting the `Histogram`
@@ -88,6 +87,6 @@ ax = Axis(fig[1, 1];
           title = "Temperature and salinity joint distribution (weighted)",
           xlabel = "Practical salinity (psu)",
           ylabel = "Potential temperature (°C)")
-hm = heatmap!(ax, weighted_stack_hist, show_empty_bins; colorscale = log10)
+hm = heatmap!(ax, weighted_stack_hist; colorscale = log10)
 Colorbar(fig[1, 2], hm)
 fig

@@ -1,7 +1,32 @@
 using RasterHistograms
-using Documenter
+using Documenter, Literate
 
 DocMeta.setdocmeta!(RasterHistograms, :DocTestSetup, :(using RasterHistograms); recursive=true)
+const EXAMPLES_DIR = joinpath(@__DIR__, "../examples")
+const OUTPUT_DIR   = joinpath(@__DIR__, "src/literated")
+
+to_be_literated = EXAMPLES_DIR .*"/".* readdir(EXAMPLES_DIR)
+
+for file ∈ to_be_literated
+    Literate.markdown(file, OUTPUT_DIR)
+    Literate.script(file, OUTPUT_DIR)
+end
+
+example_pages = [
+   "Histograms from `Raster`s" => "literated/raster_histograms.md"
+]
+module_pages = [
+    "RasterHistograms"         => "modules/RasterHistograms.md"
+]
+library_pages = [
+    "Function index" => "library/function_index.md"
+]
+pages = [
+    "Home" => "index.md",
+    "Modules" => module_pages,
+    "Examples" => example_pages,
+    "Library" => library_pages
+]
 
 makedocs(;
     modules=[RasterHistograms],
@@ -14,9 +39,7 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages = pages
 )
 
 deploydocs(;
