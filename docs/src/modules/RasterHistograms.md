@@ -1,18 +1,12 @@
 # [RasterHistograms](@id raster_hist_module)
 
-## Overview
-
-This module uses [empirical estimation from StatsBase.jl](https://juliastats.org/StatsBase.jl/stable/empirical/) to fit `Histogram`s to `Raster`, `RasterStack` or `RasterSeries` data structures.
-Arguments that can be passed to [`fit(::Histogram)`](https://juliastats.org/StatsBase.jl/stable/empirical/#StatsAPI.fit-Tuple{Type{Histogram},%20Vararg{Any}}) can be passed to the constructors for the the various `AbstractRasterHistogram`s.
-The aim of the module is to provide functionality similar to python's [xhistogram](https://xhistogram.readthedocs.io/en/latest/index.html) for [xarray](https://docs.xarray.dev/en/stable/) in Julia.
-
-## Module workings
+## Package workings
 
 For a single `Raster` (i.e. one variable)
 
 ```@meta
 DocTestSetup = quote
-    using Rasters, OceanRasterConversions.RasterHistograms
+    using Rasters, RasterHistograms
 end
 ```
 
@@ -23,9 +17,9 @@ julia> rs = Raster(dummy_data, (X(1:10), Ti(1:10)); name = :dummy_variable);
 
 julia> rs_hist = RasterLayerHistogram(rs)
 RasterLayerHistogram for the variable dummy_variable
- ┣━━ Layer dimensions: (:X, :Ti) 
- ┣━━━━━━━━ Layer size: (10, 10)
- ┗━━━━━━━━━ Histogram: 1-dimensional
+┣━━ Layer dimensions: (:X, :Ti) 
+┣━━━━━━━━ Layer size: (10, 10)
+┗━━━━━━━━━ Histogram: 1-dimensional
 
 julia> rs_hist.histogram
 StatsBase.Histogram{Int64, 1, Tuple{StepRangeLen{Float64, Base.TwicePrecision{Float64}, Base.TwicePrecision{Float64}, Int64}}}
@@ -55,9 +49,9 @@ and 3 layers:
 
 julia> RasterStackHistogram(stack)
 RasterStackHistogram for the variables (:v1, :v2, :v3)
- ┣━━ Stack dimensions: (:X, :Y)
- ┣━━ Stack layer size: (10, 10)
- ┗━━━━━━━━━ Histogram: 3-dimensional
+┣━━ Stack dimensions: (:X, :Y)
+┣━━ Stack layer size: (10, 10)
+┗━━━━━━━━━ Histogram: 3-dimensional
 
 ```
 
