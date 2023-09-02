@@ -1,6 +1,6 @@
-# Function index for [RasterHistograms](@id rh_func_index)
+# Function index for RasterHistograms
 
-## RasterHistograms exported functions
+## [RasterHistograms exported functions](@id rh_func_index)
 
 ```@autodocs
 Modules = [RasterHistograms]

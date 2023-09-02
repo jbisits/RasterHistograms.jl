@@ -64,7 +64,7 @@ function MakieCore.convert_arguments(P::Type{<:MakieCore.AbstractPlot},
                                      arh::AbstractRasterHistogram,
                                      show_empty_bins::Bool=false)
 
-    histogram_to_plot = show_empty_bins ? raster_zeros_to_nan(arh) : arh.histogram
+    histogram_to_plot = show_empty_bins ? arh.histogram : raster_zeros_to_nan(arh)
 
     return convert_arguments(P, histogram_to_plot)
 
