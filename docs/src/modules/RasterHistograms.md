@@ -12,7 +12,7 @@ For a single `Raster` (i.e. one variable)
 
 ```@meta
 DocTestSetup = quote
-    using Rasters, OceanRasterConversions.RasterHistograms
+    using Rasters, RasterHistograms
 end
 ```
 
