@@ -9,6 +9,14 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Rasters = "a3a2b9e3-a471-40c9-b274-f788e487c689"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
+[weakdeps]
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
+
+[extensions]
+RasterHistogramsMakieExt = "MakieCore"
+RasterHistogramsPlotsExt = "RecipesBase"
+
 [compat]
 julia = "1"
 
