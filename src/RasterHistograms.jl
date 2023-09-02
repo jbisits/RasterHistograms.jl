@@ -1,8 +1,9 @@
 module RasterHistograms
 
-using Rasters, StatsBase, LinearAlgebra, DocStringExtensions
+using Rasters, StatsBase, LinearAlgebra, DocStringExtensions, MakieCore, RecipesBase
 import LinearAlgebra.normalize!
 import Rasters.DimensionalData.dim2key
+import MakieCore.convert_arguments
 import Base: show, iterate
 
 export RasterLayerHistogram, RasterStackHistogram, RasterSeriesHistogram,
