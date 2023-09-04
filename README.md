@@ -16,3 +16,12 @@ The package is installed using Julia's package manager
 julia> ]
 (@v1.9) pkg> add RasterHistograms
 ```
+
+To start using the package you will also need to have [Rasters.jl](https://github.com/rafaqz/Rasters.jl) installed (in the same manner as above but replace `RasterHistograms` with `Rasters`).
+To then use the packages type
+
+```julia
+julia> using Rasters, RasterHistograms
+```
+
+into the repl.
