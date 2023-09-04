@@ -16,5 +16,3 @@ The package is installed using Julia's package manager
 julia> ]
 (@v1.9) pkg> add RasterHistograms
 ```
-
-This package makes use of package extensions and therefore requires Julia 1.9 or later to run.
