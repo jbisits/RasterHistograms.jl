@@ -34,7 +34,7 @@ function RasterLayerHistogram(rs::Raster; closed = :left, nbins = nothing)
     dimensions = DimensionalData.dim2key(dims(rs))
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
-    flattened_rs_data = collect(skipmissing(read(rs)[find_nm]))
+    flattened_rs_data = collect(read(rs)[find_nm])
 
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_rs_data; closed) :
                                    StatsBase.fit(Histogram, flattened_rs_data; closed, nbins)
@@ -50,7 +50,7 @@ function RasterLayerHistogram(rs::Raster, weights::AbstractWeights;
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
     find_nm_vec = reshape(find_nm, :)
-    flattened_rs_data = collect(skipmissing(read(rs)[find_nm]))
+    flattened_rs_data = collect(read(rs)[find_nm])
 
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_rs_data,
                                                  weights[find_nm_vec]; closed) :
@@ -66,7 +66,7 @@ function RasterLayerHistogram(rs::Raster, edges::AbstractVector; closed = :left)
     dimensions = DimensionalData.dim2key(dims(rs))
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
-    flattened_rs_data = collect(skipmissing(read(rs)[find_nm]))
+    flattened_rs_data = collect(read(rs)[find_nm])
 
     histogram = StatsBase.fit(Histogram, flattened_rs_data, edges; closed)
 
@@ -81,7 +81,7 @@ function RasterLayerHistogram(rs::Raster, weights::AbstractWeights, edges::Abstr
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
     find_nm_vec = reshape(find_nm, :)
-    flattened_rs_data = collect(skipmissing(read(rs)[find_nm]))
+    flattened_rs_data = collect(read(rs)[find_nm])
 
     histogram = StatsBase.fit(Histogram, flattened_rs_data, weights[find_nm_vec],
                               edges; closed)
