@@ -38,13 +38,15 @@ function RasterSeriesHistogram(series::RasterSeries, edges::NTuple{N, AbstractVe
     dimensions = DimensionalData.dim2key(dims(series[1]))
     rs_size = size(series[1])
     find_nm = find_stack_non_missing(series[1])
-    flattened_stack_data = Tuple(collect(read(layer)[find_nm]) for layer ∈ series[1])
+    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                 for layer ∈ series[1])
 
     histogram = StatsBase.fit(Histogram, flattened_stack_data, edges; closed)
 
     for stack ∈ series[2:end]
         find_nm = find_stack_non_missing(stack)
-        flattened_stack_data = Tuple(collect(read(layer)[find_nm]) for layer ∈ stack)
+        flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                     for layer ∈ stack)
 
         h = StatsBase.fit(Histogram, flattened_stack_data, edges; closed)
 
@@ -66,7 +68,8 @@ function RasterSeriesHistogram(series::RasterSeries, weights::AbstractWeights,
     rs_size = size(series[1])
     find_nm = find_stack_non_missing(series[1])
     find_nm_vec = reshape(find_nm, :)
-    flattened_stack_data = Tuple(collect(read(layer)[find_nm]) for layer ∈ series[1])
+    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                 for layer ∈ series[1])
 
     histogram = StatsBase.fit(Histogram, flattened_stack_data, weights[find_nm_vec],
                               edges; closed)
@@ -75,7 +78,8 @@ function RasterSeriesHistogram(series::RasterSeries, weights::AbstractWeights,
 
         find_nm_ = find_stack_non_missing(stack)
         find_nm_vec_ = reshape(find_nm_, :)
-        flattened_stack_data = Tuple(collect(read(layer)[find_nm_]) for layer ∈ stack)
+        flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm_])
+                                     for layer ∈ stack)
 
         h = StatsBase.fit(Histogram, flattened_stack_data, weights[find_nm_vec_],
                           edges; closed)
