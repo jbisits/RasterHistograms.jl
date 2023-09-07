@@ -5,7 +5,7 @@ from the layers of a `RasterStack`.
 """
 function find_stack_non_missing(stack::RasterStack)
 
-    nm_raster_vec = [.!ismissing.(stack[var]) for var ∈ keys(stack)]
+    nm_raster_vec = [.!ismissing.(read(stack[var])) for var ∈ keys(stack)]
     intersection_non_missings = nm_raster_vec[1]
     for nm_rs ∈ nm_raster_vec[2:end]
         intersection_non_missings = intersection_non_missings .&& nm_rs .== 1

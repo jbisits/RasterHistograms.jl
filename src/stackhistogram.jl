@@ -35,7 +35,8 @@ function RasterStackHistogram(stack::RasterStack; closed = :left, nbins = nothin
     dimensions = DimensionalData.dim2key(dims(stack))
     rs_size = size(stack)
     find_nm = find_stack_non_missing(stack)
-    flattened_stack_data = Tuple(collect(skipmissing(read(layer)[find_nm])) for layer ∈ stack)
+    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                 for layer ∈ stack)
 
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_stack_data; closed) :
                                    StatsBase.fit(Histogram, flattened_stack_data;
@@ -52,7 +53,8 @@ function RasterStackHistogram(stack::RasterStack, weights::AbstractWeights;
     rs_size = size(stack)
     find_nm = find_stack_non_missing(stack)
     find_nm_vec = reshape(find_nm, :)
-    flattened_stack_data = Tuple(collect(skipmissing(read(layer)[find_nm])) for layer ∈ stack)
+    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                 for layer ∈ stack)
 
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_stack_data,
                                                  weights[find_nm_vec]; closed) :
@@ -70,7 +72,8 @@ function RasterStackHistogram(stack::RasterStack, edges::NTuple{N, AbstractVecto
     dimensions = DimensionalData.dim2key(dims(stack))
     rs_size = size(stack)
     find_nm = find_stack_non_missing(stack)
-    flattened_stack_data = Tuple(collect(skipmissing(read(layer)[find_nm])) for layer ∈ stack)
+    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                 for layer ∈ stack)
 
     histogram = StatsBase.fit(Histogram, flattened_stack_data, edges; closed)
 
@@ -85,7 +88,8 @@ function RasterStackHistogram(stack::RasterStack, weights::AbstractWeights,
     rs_size = size(stack)
     find_nm = find_stack_non_missing(stack)
     find_nm_vec = reshape(find_nm, :)
-    flattened_stack_data = Tuple(collect(skipmissing(read(layer)[find_nm])) for layer ∈ stack)
+    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
+                                         for layer ∈ stack)
 
     histogram = StatsBase.fit(Histogram, flattened_stack_data, weights[find_nm_vec],
                               edges; closed)
