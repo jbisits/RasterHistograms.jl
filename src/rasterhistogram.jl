@@ -34,7 +34,7 @@ function RasterLayerHistogram(rs::Raster; closed = :left, nbins = nothing)
     dimensions = DimensionalData.dim2key(dims(rs))
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
-    flattened_rs_data = collect(read(rs)[find_nm])
+    flattened_rs_data = collect(rs[find_nm])
 
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_rs_data; closed) :
                                    StatsBase.fit(Histogram, flattened_rs_data; closed, nbins)
@@ -45,12 +45,13 @@ end
 function RasterLayerHistogram(rs::Raster, weights::AbstractWeights;
                               closed = :left, nbins = nothing)
 
+    rs = read(rs)
     layer = name(rs)
     dimensions = DimensionalData.dim2key(dims(rs))
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
     find_nm_vec = reshape(find_nm, :)
-    flattened_rs_data = collect(read(rs)[find_nm])
+    flattened_rs_data = collect(rs[find_nm])
 
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_rs_data,
                                                  weights[find_nm_vec]; closed) :
@@ -62,11 +63,12 @@ function RasterLayerHistogram(rs::Raster, weights::AbstractWeights;
 end
 function RasterLayerHistogram(rs::Raster, edges::AbstractVector; closed = :left)
 
+    rs = read(rs)
     layer = name(rs)
     dimensions = DimensionalData.dim2key(dims(rs))
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
-    flattened_rs_data = collect(read(rs)[find_nm])
+    flattened_rs_data = collect(rs[find_nm])
 
     histogram = StatsBase.fit(Histogram, flattened_rs_data, edges; closed)
 
@@ -76,12 +78,13 @@ end
 function RasterLayerHistogram(rs::Raster, weights::AbstractWeights, edges::AbstractVector;
                               closed = :left)
 
+    rs = read(rs)
     layer = name(rs)
     dimensions = DimensionalData.dim2key(dims(rs))
     rs_size = size(rs)
     find_nm = @. !ismissing(rs)
     find_nm_vec = reshape(find_nm, :)
-    flattened_rs_data = collect(read(rs)[find_nm])
+    flattened_rs_data = collect(rs[find_nm])
 
     histogram = StatsBase.fit(Histogram, flattened_rs_data, weights[find_nm_vec],
                               edges; closed)
