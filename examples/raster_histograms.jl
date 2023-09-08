@@ -50,8 +50,7 @@ fig
 #     Plotting using [Plots.jl](https://docs.juliaplots.org/latest/) is also possible.
 #     See the [module documentation](@ref raster_hist_module) for more info.
 # ## Real world data example
-# This package is mainly concerned with ocean variables, so we now look at temperature and
-# salinity distributions using ECCO model output.
+# We now look at temperature and salinity distributions using ECCOv4r4 model output.
 Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
 # This example also shows how the module works for 2-dimensional `Histograms` though it can
 # be generalised to N dimensions depending on the number of variables
@@ -62,7 +61,7 @@ Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collect
 # dimensional. Note the order of the variables matters here for plotting purposes. The first
 # layer, in this case `:SALT` will be the x-axis, and the second layer `:THETA` will be
 # the y-axis.
-stack_TS = RasterStack("ECCO_data.nc"; name = (:SALT, :THETA))
+stack_TS = RasterStack("ECCO_data.nc", name = (:SALT, :THETA))
 edges = (31:0.025:38, -2:0.1:32)
 stack_hist = RasterStackHistogram(stack_TS, edges)
 # Now we can plot, the histogram and look at the unweighted distribtution of temperature and
