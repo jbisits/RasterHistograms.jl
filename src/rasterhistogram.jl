@@ -5,15 +5,15 @@ updated using the `normalize` (or otherwise) function.
 
 $(TYPEDFIELDS)
 """
-mutable struct RasterLayerHistogram <: AbstractRasterHistogram
+mutable struct RasterLayerHistogram{L, D, S} <: AbstractRasterHistogram
     "The layer (variable) from the `Raster`"
-        layer       :: Symbol
+        layer       :: L
     "The dimensions of the `Raster`"
-        dimensions  :: Tuple
+        dimensions  :: D
     "The size of the `Raster`"
-        raster_size :: Tuple
+        raster_size :: S
     "The 1-dimensional histogram fitted to the `Raster` layer data"
-        histogram   :: AbstractHistogram
+        histogram   :: Histogram
 end
 """
     function RasterLayerHistogram(rs::Raster; closed = :left, nbins = nothing)

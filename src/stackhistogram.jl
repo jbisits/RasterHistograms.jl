@@ -5,13 +5,13 @@ updated using the `normalize` (or otherwise) function.
 
     $(TYPEDFIELDS)
 """
-mutable struct RasterStackHistogram <: AbstractRasterHistogram
+mutable struct RasterStackHistogram{L, D, S} <: AbstractRasterHistogram
     "The layers (variables) from the `RasterStack` used to fit the `Histogram`"
-        layers      :: Tuple
+        layers      :: L
     "The dimensions of the `RasterStack`"
-        dimensions  :: Tuple
+        dimensions  :: D
     "The size of the `RasterStack` layers"
-        raster_size :: Tuple
+        raster_size :: S
     "The N-dimensional `Histogram` fitted to the N layers from `RasterStack`"
         histogram   :: Histogram
 end

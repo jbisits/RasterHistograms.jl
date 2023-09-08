@@ -19,7 +19,7 @@ test_hist_weights = weights(randn(size(rs_stack[:Sₚ])))
 test_nbins = 200
 
 # Single `Raster`
-# RasterLayerHistograma
+# RasterLayerHistograms
 raster_hist = RasterLayerHistogram(rs_stack[:Sₚ])
 raster_hist_nb = RasterLayerHistogram(rs_stack[:Sₚ]; nbins = test_nbins)
 raster_hist_w = RasterLayerHistogram(rs_stack[:Sₚ], test_hist_weights)
@@ -71,23 +71,35 @@ stack_array_hists = (stack_array_hist, stack_array_hist_nb, stack_array_hist_w,
 
 # `RasterSeries`
 test_hist_weights_series = randn(size(rs_series[1]))
-series_hist_e = RasterSeriesHistogram(rs_series, test_hist_edges)
-series_hist_we = RasterSeriesHistogram(rs_series, weights(test_hist_weights_series), test_hist_edges)
-RSEH = (series_hist_e, series_hist_we)
+raster_series = slice(rs_stack[:Sₚ], Ti)
+series_hist_stack_e = RasterSeriesHistogram(rs_series, test_hist_edges)
+series_hist_raster_e = RasterSeriesHistogram(raster_series, test_hist_edges[1])
+series_hist_stack_we = RasterSeriesHistogram(rs_series, weights(test_hist_weights_series), test_hist_edges)
+series_hist_raster_we = RasterSeriesHistogram(raster_series, weights(test_hist_weights_series), test_hist_edges[1])
+RSEH = (series_hist_raster_e, series_hist_raster_we, series_hist_stack_e, series_hist_stack_we)
 # extract all data and compare `rs_hist` to `Histogram` from an `NTuple` of `Array`s
+Sₚ_raster_vec = Float64[]
+test_series_raster_weights = Float64[]
 Sₚ_vec = Float64[]
 θ_vec = Float64[]
 test_series_weights = Float64[]
 for r ∈ rs_series
+    find_nm = @. !ismissing(r[:Sₚ])
+    append!(test_series_raster_weights, test_hist_weights_series[reshape(find_nm, :)])
+    append!(Sₚ_raster_vec, collect(skipmissing(r[:Sₚ][find_nm])))
     find_nm = @. !ismissing(r[:Sₚ]) && !ismissing(r[:θ])
     append!(test_series_weights, test_hist_weights_series[reshape(find_nm, :)])
     append!(Sₚ_vec, collect(skipmissing(r[:Sₚ][find_nm])))
     append!(θ_vec, collect(skipmissing(r[:θ][find_nm])))
 end
-series_array_hist_e = fit(Histogram, (Sₚ_vec, θ_vec), test_hist_edges)
-series_array_hist_we = fit(Histogram, (Sₚ_vec, θ_vec), weights(test_series_weights),
+series_rs_array_hist_e = fit(Histogram, Sₚ_raster_vec, test_hist_edges[1])
+series_rs_array_hist_we = fit(Histogram, Sₚ_raster_vec, weights(test_series_raster_weights),
+                              test_hist_edges[1])
+series_stack_array_hist_e = fit(Histogram, (Sₚ_vec, θ_vec), test_hist_edges)
+series_stack_array_hist_we = fit(Histogram, (Sₚ_vec, θ_vec), weights(test_series_weights),
                            test_hist_edges)
-series_array_hists = (series_array_hist_e, series_array_hist_we)
+series_array_hists = (series_rs_array_hist_e, series_rs_array_hist_we,
+                      series_stack_array_hist_e, series_stack_array_hist_we)
 
 hist_fields = (:closed, :edges, :isdensity, :weights)
 modes = (:none, :pdf, :probability, :density)
@@ -106,10 +118,3 @@ dA_XZ = repeat(reshape(dx .* dz', :), outer = length(ti))
 dA_YZ = repeat(reshape(dy .* dz', :), outer = length(ti))
 # Volume
 dV = repeat(dz[1] * reshape(dx .* dy', :), outer = length(z) * length(ti))
-
-## New method
-# using OceanRasterConversions.RasterHistograms
-# RasterLayerHistogram(rs_stack[:Sₚ])
-# test = RasterStackHistogram(rs_stack)
-# test = RasterSeriesHistogram(rs_series, (33:0.01:38, -2:0.1:20))
-normalize(raster_array_hists[1]; mode = :none).weights

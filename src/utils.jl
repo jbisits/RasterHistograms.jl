@@ -27,12 +27,13 @@ function Base.show(io::IO, rsh::RasterStackHistogram)
     print(io,   "┗━━━━━━━━━ Histogram: $(length(rsh.layers))-dimensional")
 end
 function Base.show(io::IO, rseh::RasterSeriesHistogram)
+    hist_dim = rseh.layers isa Symbol ? 1 : length(rseh.layers)
     println(io, "RasterSeriesHistogram for the variables $(rseh.layers)")
     println(io, "┣━━━━━━━━━━━━━━━━━━━━ Series dimension: $(rseh.series_dimension)")
     println(io, "┣━━━━━━━━━━━━━━━━━━━━━━━ Series length: $(rseh.series_length)")
     println(io, "┣━━ Data Dimensions of series elements: $(rseh.dimensions) ")
     println(io, "┣━━━━━━━━ Data size of series elements: $(rseh.raster_size)")
-    print(io,   "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━ Histogram: $(length(rseh.layers))-dimensional")
+    print(io,   "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━ Histogram: $(hist_dim)-dimensional")
 end
 "`iterate` methods for `AbstractRasterHistogram`s."
 Base.iterate(arh::AbstractRasterHistogram, state = 1) =
