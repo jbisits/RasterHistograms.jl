@@ -35,9 +35,12 @@ function RasterStackHistogram(stack::RasterStack; closed = :left, nbins = nothin
     dimensions = DimensionalData.dim2key(dims(stack))
     rs_size = size(stack)
     find_nm = find_stack_non_missing(stack)
-    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
-                                 for layer ∈ stack)
-
+    flattened_stack_data = Array{AbstractArray}(undef, 2)
+    for (i, layer) ∈ enumerate(stack)
+        l = @view stack[layers[i]]
+        flattened_stack_data[i] = collect(eltype(skipmissing(stack[layers[i]])), l[find_nm])
+    end
+    flattened_stack_data = (flattened_stack_data[1], flattened_stack_data[2])
     histogram = isnothing(nbins) ? StatsBase.fit(Histogram, flattened_stack_data; closed) :
                                    StatsBase.fit(Histogram, flattened_stack_data;
                                                  closed, nbins)
