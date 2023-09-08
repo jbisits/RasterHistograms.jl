@@ -1,21 +1,22 @@
 """
     mutable struct RasterSeriesHistogram <: AbstractRasterHistogram
-A `RasterSeriesHistogram`. The `struct` is `mutable` so that the `histogram` field can be
-updated using the `normalize` (or otherwise) function.
+A `RasterSeriesHistogram` where the `child`s of the `RasterSeries` are `RasterStack`s or `Raster`s.
+The `struct` is `mutable` so that the `histogram` field can be updated using the `normalize`
+(or otherwise) function.
 
 $(TYPEDFIELDS)
 """
-mutable struct RasterSeriesHistogram <: AbstractRasterHistogram
+mutable struct RasterSeriesHistogram{L, SD, SL, D, S} <: AbstractRasterHistogram
     "The layers (variables) from the `RasterSeries` used to fit the `Histogram`"
-        layers           :: Tuple
+        layers           :: L
     "The dimension of the `RasterSeries` (usually this will be time)"
-        series_dimension :: Symbol
+        series_dimension :: SD
     "The length of the `RasterSeries"
-        series_length    :: Int64
+        series_length    :: SL
     "The dimensions of the elements (either a `Raster` or `RasterStack`) of the `RasterSeries`"
-        dimensions       :: Tuple
+        dimensions       :: D
     "The size of the elements (either a `Raster` or `RasterStack`) of the `RasterSeries`"
-        raster_size      :: Tuple
+        raster_size      :: S
     "The N-dimensional `Histogram` fitted to the N layers from `RasterSeries`"
         histogram        :: Histogram
 end
@@ -29,28 +30,21 @@ the bin edges must be the same, so for this constructor the edges must be passed
 constructor assumes that the dimensions are the same across all `RasterStack`s in the
 `RasterSeries`.
 """
-function RasterSeriesHistogram(series::RasterSeries, edges::NTuple{N, AbstractVector};
-                               closed = :left) where {N}
+function RasterSeriesHistogram(series::RasterSeries{<:Raster}, edges::AbstractVector;
+                               closed = :left)
 
     series_dimension = DimensionalData.dim2key(dims(series))[1]
     series_length = length(series)
-    layers = names(series[1])
+    layers = name(series[1])
     dimensions = DimensionalData.dim2key(dims(series[1]))
     rs_size = size(series[1])
-    find_nm = find_stack_non_missing(series[1])
-    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
-                                 for layer ∈ series[1])
 
-    histogram = StatsBase.fit(Histogram, flattened_stack_data, edges; closed)
+    histogram = RasterLayerHistogram(series[1], edges; closed).histogram
 
-    for stack ∈ series[2:end]
-        find_nm = find_stack_non_missing(stack)
-        flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
-                                     for layer ∈ stack)
+    for rs ∈ series[2:end]
 
-        h = StatsBase.fit(Histogram, flattened_stack_data, edges; closed)
-
-        merge!(histogram, h)
+        temp_rshist = RasterLayerHistogram(rs, edges; closed)
+        merge!(histogram, temp_rshist.histogram)
 
     end
 
@@ -58,7 +52,52 @@ function RasterSeriesHistogram(series::RasterSeries, edges::NTuple{N, AbstractVe
                                  dimensions, rs_size, histogram)
 
 end
-function RasterSeriesHistogram(series::RasterSeries, weights::AbstractWeights,
+function RasterSeriesHistogram(series::RasterSeries{<:Raster}, weights::AbstractWeights,
+                               edges::AbstractVector; closed = :left)
+
+    series_dimension = DimensionalData.dim2key(dims(series))[1]
+    series_length = length(series)
+    layers = name(series[1])
+    dimensions = DimensionalData.dim2key(dims(series[1]))
+    rs_size = size(series[1])
+
+    histogram = RasterLayerHistogram(series[1], weights, edges; closed).histogram
+
+    for rs ∈ series[2:end]
+
+        temp_rshist = RasterLayerHistogram(rs, weights, edges; closed)
+        merge!(histogram, temp_rshist.histogram)
+
+    end
+
+    return RasterSeriesHistogram(layers, series_dimension, series_length,
+                                 dimensions, rs_size, histogram)
+
+end
+function RasterSeriesHistogram(series::RasterSeries{<:RasterStack}, edges::NTuple{N, AbstractVector};
+                               closed = :left) where {N}
+
+    series_dimension = DimensionalData.dim2key(dims(series))[1]
+    series_length = length(series)
+    layers = names(series[1])
+    dimensions = DimensionalData.dim2key(dims(series[1]))
+    rs_size = size(series[1])
+
+    histogram = RasterStackHistogram(series[1], edges; closed).histogram
+
+    for stack ∈ series[2:end]
+
+        temp_stackhist = RasterStackHistogram(stack, edges; closed)
+
+        merge!(histogram, temp_stackhist.histogram)
+
+    end
+
+    return RasterSeriesHistogram(layers, series_dimension, series_length,
+                                 dimensions, rs_size, histogram)
+
+end
+function RasterSeriesHistogram(series::RasterSeries{<:RasterStack}, weights::AbstractWeights,
                                edges::NTuple{N, AbstractVector}; closed = :left) where {N}
 
     series_dimension = DimensionalData.dim2key(dims(series))[1]
@@ -66,25 +105,14 @@ function RasterSeriesHistogram(series::RasterSeries, weights::AbstractWeights,
     layers = names(series[1])
     dimensions = DimensionalData.dim2key(dims(series[1]))
     rs_size = size(series[1])
-    find_nm = find_stack_non_missing(series[1])
-    find_nm_vec = reshape(find_nm, :)
-    flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm])
-                                 for layer ∈ series[1])
 
-    histogram = StatsBase.fit(Histogram, flattened_stack_data, weights[find_nm_vec],
-                              edges; closed)
+    histogram = RasterStackHistogram(series[1], weights, edges).histogram
 
     for stack ∈ series[2:end]
 
-        find_nm_ = find_stack_non_missing(stack)
-        find_nm_vec_ = reshape(find_nm_, :)
-        flattened_stack_data = Tuple(collect(eltype(skipmissing(layer)), read(layer)[find_nm_])
-                                     for layer ∈ stack)
+        temp_stackhist = RasterStackHistogram(stack, weights, edges; closed)
 
-        h = StatsBase.fit(Histogram, flattened_stack_data, weights[find_nm_vec_],
-                          edges; closed)
-
-        merge!(histogram, h)
+        merge!(histogram, temp_stackhist.histogram)
 
     end
 
