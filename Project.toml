@@ -1,7 +1,7 @@
 name = "RasterHistograms"
 uuid = "dfdd8f93-37cf-4dac-b522-93b2288e19f1"
 authors = ["Josef Bisits <jbisits@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
