@@ -51,8 +51,8 @@ fig
 #     See the [module documentation](@ref raster_hist_module) for more info.
 # ## Real world data example
 # We now look at temperature and salinity distributions using ECCOv4r4 model output.
-Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
-Downloads.download("https://drive.google.com/uc?id=1MNeThunqpY-nFzsZLZj9BV8sM5BJgnxT&export=download", "ECCO_data.nc") #hide
+#Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
+Downloads.download("https://drive.google.com/uc?id=1MNeThunqpY-nFzsZLZj9BV8sM5BJgnxT&export=download", "ECCO_data.nc")
 # !!! info
 #     See the [NCDatasets.jl example](https://alexander-barth.github.io/NCDatasets.jl/latest/tutorials/#Data-from-NASA-EarthData)
 #     for information on how to download data from NASA EarthData.
