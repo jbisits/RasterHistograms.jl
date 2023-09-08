@@ -52,6 +52,9 @@ fig
 # ## Real world data example
 # We now look at temperature and salinity distributions using ECCOv4r4 model output.
 Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
+# !!! info
+#     See the [NCDatasets.jl example](https://alexander-barth.github.io/NCDatasets.jl/latest/tutorials/#Data-from-NASA-EarthData)
+#     for information on how to download data from NASA EarthData.
 # This example also shows how the module works for 2-dimensional `Histograms` though it can
 # be generalised to N dimensions depending on the number of variables
 # (i.e. layers in the `RasterStack`) one is looking at.
