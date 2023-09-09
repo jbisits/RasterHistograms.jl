@@ -1,5 +1,5 @@
 using RasterHistograms
-using Documenter, Literate
+using Documenter, Literate, DocumenterCitations
 
 DocMeta.setdocmeta!(RasterHistograms, :DocTestSetup, :(using RasterHistograms); recursive=true)
 const EXAMPLES_DIR = joinpath(@__DIR__, "../examples")
@@ -28,7 +28,9 @@ pages = [
     "Library" => library_pages
 ]
 
-makedocs(;
+bib = CitationBibliography(joinpath(@__DIR__, "src/refs.bib"))
+
+makedocs(bib;
     modules=[RasterHistograms],
     authors="Josef Bisits <jbisits@gmail.com>",
     repo="https://github.com/jbisits/RasterHistograms.jl/blob/{commit}{path}#{line}",

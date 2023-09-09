@@ -50,19 +50,27 @@ fig
 #     Plotting using [Plots.jl](https://docs.juliaplots.org/latest/) is also possible.
 #     See the [module documentation](@ref raster_hist_module) for more info.
 # ## Real world data example
-# We now look at temperature and salinity distributions using ECCOv4r4 model output. The
-# `try` block below is because sometimes downloading the data during the docs build from
-# NASA EarthData fails.
+# We now look at temperature and salinity distributions using ECCOv4r4 [Fukumori2022](@cite),
+# [Fukumori2021](@cite), [Forget2015](@cite) model output. The
+# function uses `try` to download from NASA EarthData but this sometimes fails during the
+# docs build.
 # !!! info
 #     See the [NCDatasets.jl example](https://alexander-barth.github.io/NCDatasets.jl/latest/tutorials/#Data-from-NASA-EarthData)
 #     for information on how to download data from NASA EarthData.
-try
-    Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
-catch
-    @info "dowloading from drive"
-    Downloads.download("https://drive.google.com/uc?id=1MNeThunqpY-nFzsZLZj9BV8sM5BJgnxT&export=download", "ECCO_data.nc")
+function download_ECCO()
+
+    try
+        Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
+    catch
+        @info "dowloading from drive"
+        Downloads.download("https://drive.google.com/uc?id=1MNeThunqpY-nFzsZLZj9BV8sM5BJgnxT&export=download", "ECCO_data.nc")
+    end
+
+    return nothing
+
 end
-# This example also shows how the module works for 2-dimensional `Histograms` though it can
+download_ECCO()
+# This example shows how the package works for 2-dimensional `Histograms` though it can
 # be generalised to N dimensions depending on the number of variables
 # (i.e. layers in the `RasterStack`) one is looking at.
 # ### Forming the `RasterStack`
@@ -98,3 +106,5 @@ ax = Axis(fig[1, 1];
 hm = heatmap!(ax, weighted_stack_hist; colorscale = log10)
 Colorbar(fig[1, 2], hm)
 fig
+# ```@bibliography
+# ```
