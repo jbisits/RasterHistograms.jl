@@ -17,7 +17,7 @@ hm = heatmap!(ax1, x, t, rs.data)
 Colorbar(fig[2, 1], hm; vertical = false, flipaxis = false)
 ax2 = Axis(fig[1, 2];
           title = "Histogram of Toy data",
-          xlabel = "Toy data", ylabel = "Counts")
+          xlabel = "Toy data", ylabel = "Frequency")
 plot!(ax2, rs_hist; color = :steelblue)
 fig
 
@@ -36,9 +36,21 @@ ax2 = Axis(fig[1, 2];
 plot!(ax2, rs_hist; color = :steelblue)
 fig
 
-Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
+function download_ECCO()
 
-stack_TS = RasterStack("ECCO_data.nc"; name = (:SALT, :THETA))
+    try
+        Downloads.download("https://opendap.earthdata.nasa.gov/providers/POCLOUD/collections/ECCO%2520Ocean%2520Temperature%2520and%2520Salinity%2520-%2520Daily%2520Mean%25200.5%2520Degree%2520(Version%25204%2520Release%25204)/granules/OCEAN_TEMPERATURE_SALINITY_day_mean_2007-01-01_ECCO_V4r4_latlon_0p50deg.dap.nc4", "ECCO_data.nc")
+    catch
+        @info "dowloading from drive"
+        Downloads.download("https://drive.google.com/uc?id=1MNeThunqpY-nFzsZLZj9BV8sM5BJgnxT&export=download", "ECCO_data.nc")
+    end
+
+    return nothing
+
+end
+download_ECCO()
+
+stack_TS = RasterStack("ECCO_data.nc", name = (:SALT, :THETA))
 edges = (31:0.025:38, -2:0.1:32)
 stack_hist = RasterStackHistogram(stack_TS, edges)
 
